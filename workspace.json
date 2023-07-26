@@ -1,0 +1,334 @@
+{
+  "version": 1,
+  "projects": {
+    "app": {
+      "root": "apps/app",
+      "sourceRoot": "apps/app/src",
+      "projectType": "application",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/web:webpack",
+          "options": {
+            "outputPath": "dist/apps/app",
+            "index": "apps/app/src/index.html",
+            "main": "apps/app/src/main.tsx",
+            "polyfills": "apps/app/src/polyfills.ts",
+            "tsConfig": "apps/app/tsconfig.app.json",
+            "assets": [
+              "apps/app/src/assets",
+              {
+                "input": "libs/shared/assets",
+                "glob": "*.ico",
+                "output": "."
+              },
+              {
+                "input": "libs/shared/assets/images",
+                "glob": "**/*",
+                "output": "assets/images"
+              }
+            ],
+            "styles": [
+              "libs/shared/assets/styles/fonts.scss",
+              "libs/shared/assets/styles/tailwind.scss",
+              "libs/shared/assets/styles/global.scss",
+              "apps/app/src/styles.scss"
+            ],
+            "scripts": [],
+            "webpackConfig": "tools/config/webpack/nx-react"
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/app/src/environments/environment.ts",
+                  "with": "apps/app/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                }
+              ]
+            },
+            "development": {
+              "extractLicenses": false,
+              "optimization": false,
+              "sourceMap": true,
+              "vendorChunk": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@nrwl/web:dev-server",
+          "options": {
+            "buildTarget": "app:build"
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "app:build:production"
+            },
+            "development": {
+              "buildTarget": "app:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["apps/app/**/*.{ts,tsx,js,jsx}"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/app/jest.config.ts",
+            "passWithNoTests": true
+          }
+        },
+        "ts-check": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "cwd": "apps/app",
+            "command": "npx tsc --noEmit --project tsconfig.app.json"
+          }
+        }
+      },
+      "tags": []
+    },
+    "app-e2e": {
+      "root": "apps/app-e2e",
+      "sourceRoot": "apps/app-e2e/src",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@nrwl/cypress:cypress",
+          "options": {
+            "cypressConfig": "apps/app-e2e/cypress.config.ts",
+            "tsConfig": "apps/app-e2e/tsconfig.e2e.json",
+            "devServerTarget": "app:serve",
+            "testingType": "e2e"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "app:serve:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["apps/app-e2e/**/*.{js,ts}"]
+          }
+        }
+      },
+      "tags": [],
+      "implicitDependencies": ["app"]
+    },
+    "nextjs": {
+      "root": "apps/nextjs",
+      "sourceRoot": "apps/nextjs",
+      "projectType": "application",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/next:build",
+          "options": {
+            "root": "apps/nextjs",
+            "outputPath": "dist/apps/nextjs",
+            "customServerPath": "/src/server.ts"
+          },
+          "configurations": {
+            "production": {},
+            "development": {
+              "outputPath": "apps/nextjs"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@nrwl/next:server",
+          "options": {
+            "buildTarget": "nextjs:build",
+            "dev": true,
+            "customServerPath": "/src/server.ts"
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "nextjs:build:production",
+              "dev": false
+            },
+            "development": {
+              "buildTarget": "nextjs:build:development",
+              "dev": true
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "export": {
+          "builder": "@nrwl/next:export",
+          "options": {
+            "buildTarget": "nextjs:build:production"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["apps/nextjs/**/*.{ts,tsx}"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/nextjs/jest.config.ts",
+            "passWithNoTests": true
+          }
+        },
+        "ts-check": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "cwd": "apps/nextjs",
+            "command": "npx tsc --noEmit --project tsconfig.json"
+          }
+        }
+      },
+      "tags": []
+    },
+    "nextjs-e2e": {
+      "root": "apps/nextjs-e2e",
+      "sourceRoot": "apps/nextjs-e2e/src",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@nrwl/cypress:cypress",
+          "options": {
+            "cypressConfig": "apps/nextjs-e2e/cypress.config.ts",
+            "tsConfig": "apps/nextjs-e2e/tsconfig.e2e.json",
+            "devServerTarget": "nextjs:serve",
+            "testingType": "e2e"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "nextjs:serve:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["apps/nextjs-e2e/**/*.{js,ts}"]
+          }
+        }
+      },
+      "tags": [],
+      "implicitDependencies": ["nextjs"]
+    },
+    "shared-assets": {
+      "root": "libs/shared/assets",
+      "sourceRoot": "libs/shared/assets",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {},
+      "tags": []
+    },
+    "shared-components": {
+      "root": "libs/shared/components",
+      "sourceRoot": "libs/shared/components/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/shared/components/**/*.{ts,tsx,js,jsx}"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/shared/components/jest.config.ts",
+            "passWithNoTests": true
+          }
+        },
+        "storybook": {
+          "builder": "@nrwl/storybook:storybook",
+          "options": {
+            "uiFramework": "@storybook/react",
+            "port": 4400,
+            "config": {
+              "configFolder": "libs/shared/components/.storybook"
+            }
+          },
+          "configurations": {
+            "ci": {
+              "quiet": true
+            }
+          }
+        },
+        "build-storybook": {
+          "builder": "@nrwl/storybook:build",
+          "options": {
+            "uiFramework": "@storybook/react",
+            "outputPath": "dist/storybook/shared-components",
+            "config": {
+              "configFolder": "libs/shared/components/.storybook"
+            }
+          },
+          "configurations": {
+            "ci": {
+              "quiet": true
+            }
+          }
+        },
+        "ts-check": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "cwd": "libs/shared/components",
+            "command": "npx tsc --noEmit --project tsconfig.lib.json"
+          }
+        }
+      },
+      "tags": []
+    },
+    "shared-components-e2e": {
+      "root": "apps/shared-components-e2e",
+      "sourceRoot": "apps/shared-components-e2e/src",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@nrwl/cypress:cypress",
+          "options": {
+            "cypressConfig": "apps/shared-components-e2e/cypress.config.ts",
+            "tsConfig": "apps/shared-components-e2e/tsconfig.e2e.json",
+            "devServerTarget": "shared-components:storybook",
+            "testingType": "e2e"
+          },
+          "configurations": {
+            "ci": {
+              "devServerTarget": "shared-components:storybook:ci"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["apps/shared-components-e2e/**/*.{js,ts}"]
+          }
+        }
+      },
+      "tags": [],
+      "implicitDependencies": ["shared-components"]
+    }
+  }
+}

@@ -58,9 +58,9 @@ This project was generated using [Nx](https://nx.dev/) ([v14.5.10](https://githu
 
 ### app - [nx react plugin](https://nx.dev/latest/react/plugins/react/overview)
 
-- development: `nx serve app`
+- development: `nx serve nextjs`
 
-- build: `nx build app`
+- build: `nx build nextjs`
 
   - with the flag `--prod` that will do the optimizations for production
 
